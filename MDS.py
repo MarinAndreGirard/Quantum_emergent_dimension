@@ -78,6 +78,18 @@ def H_from_couplings(N, k):
         H += Hab(Jab, a, b)
     return H
 
+def H_from_couplings_given(Jab):
+    """
+    return a dense hamiltonian from the saved couplings. In the Pauli-z basis.
+    N: system size
+    k: sample number
+    """
+    letters = ['1', 'X', 'Y', 'Z']
+    H = 0
+    for a,b in [(1,3),(1,1),(2,2),(3,3),(3,1)]:
+        H += Hab(Jab, a, b)
+    return H
+
 def get_eigenstates(H):
     eigenvalues, eigenvectors = np.linalg.eigh(H)
     idx = np.argsort(eigenvalues)[::-1]  # Get the indices for sorting in descending order
@@ -715,6 +727,80 @@ def MDS_from_couplings(state_number,N=12,k=0,cuttoff=0.3,file_name="no_file_name
     X_file_path = os.path.join(outputs_dir, "X" + file_name)
     np.save(X_file_path,Xab)
 
+def MDS_from_couplings_given(J,N,state_number=0,cuttoff=0.3,file_name="no_file_name"):
+    
+    H = H_from_couplings_given(J)
+    eigenvalues, eigenvectors = np.linalg.eigh(H)
+    state = get_state(eigenvectors[state_number])
+    rho=get_full_density_matrix(state)
+    
+    I = get_I_matrix(N,rho)
+    plt.imshow(I, cmap='hot', interpolation='nearest')
+    plt.title("Heat map of I")
+    plt.colorbar()
+    plt.show()
+    
+    print("Graph of mutual information")
+    define_graph(I)
+
+    w=re_weighing(I)
+    print("re-scaled graph of mutual information")
+    define_graph(w)
+
+    dab=distance(w)
+    print("Graph of distances")
+    define_graph(dab)
+
+    Bab=calculate_B(dab)
+    eig=get_eigenvalues(Bab)
+    Xab=calculate_X(Bab)
+
+    plt.imshow(Xab, cmap='hot', interpolation='nearest')
+    plt.title("Heat map of the coordinate matrix")
+    plt.colorbar()
+    plt.show()
+
+    plt.scatter(range(len(eig)),eig)
+    plt.yscale('log')
+    plt.ylabel(f'$\lambda_k$')
+    plt.xlabel("k")
+    plt.title("Scatter plot of eigenvalues")
+    plt.show()
+    
+    stress_list=[]
+    for d in range(1,N):
+        stress_list.append(epsilon(d,eig))
+
+    plt.scatter(range(1,N),stress_list)
+    plt.title("Plot of the stress as a function of euclidean embedding dimension")
+    plt.xlabel("D")
+    plt.ylabel(f"$\epsilon$")
+    plt.show()
+
+    # we calculate the value of the stress for different chosen effective dimensions D
+
+    D_eff=0
+    for index, value in enumerate(stress_list):
+        if value > cuttoff:
+            D_eff= index+2
+
+    print(f"Using cut-off:{cuttoff} we get D = {D_eff}")
+    print(f"The stress for D = {D_eff} is : {epsilon(D_eff,eig)}")
+    #From this we can creat an arbitrary condition on a dimension being appropriate. ie D = the first D such that stress<0.2?
+    #In our case we woudl get D=5
+
+    plot_3D_points(Xab)
+    outputs_dir = "outputs"
+    I_file_path = os.path.join(outputs_dir, "I" + file_name)
+    np.save(I_file_path, I)
+    w_file_path = os.path.join(outputs_dir, "w" + file_name)
+    np.save(w_file_path,w)
+    d_file_path = os.path.join(outputs_dir, "d" + file_name)
+    np.save(d_file_path,dab)
+    B_file_path = os.path.join(outputs_dir, "B" + file_name)
+    np.save(B_file_path,Bab)
+    X_file_path = os.path.join(outputs_dir, "X" + file_name)
+    np.save(X_file_path,Xab)
 
 def MDS_from_H_eig(H,state_number,N=12,cuttoff=0.3,file_name="no_file_name"):
     
