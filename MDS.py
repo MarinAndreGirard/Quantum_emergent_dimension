@@ -463,6 +463,7 @@ def distance(w):
     return dab
 
 def calculate_B(dab):
+    #Note that it can have negative eigenvalues.
     N = len(dab)
     B = [[0 for _ in range(N)] for _ in range(N)]
     
@@ -476,6 +477,7 @@ def calculate_B(dab):
     return B
 
 def calculate_X(B):
+    #We absolutely have to order them in order ob importance, the sign being not important. we want them in descending order of absolut value.
     N = np.shape(B)[0]
     X = np.zeros((N, N))
 
@@ -484,7 +486,7 @@ def calculate_X(B):
     eigenvalues_sign = np.zeros((N, 1))
     for i in range(N):
         if eigenvalues[i] == 0:
-            eigenvalue_sign[i]=0
+            eigenvalues_sign[i]=0
         else:
             eigenvalues_sign[i] = eigenvalues[i] / abs(eigenvalues[i])
     eigenvectors_new = np.zeros((N,N))
@@ -537,8 +539,30 @@ def plot_3D_points(X):
     fig = go.Figure(data=go.Scatter3d(x=X_3[:, 0], y=X_3[:, 1], z=X_3[:, 2], mode='markers'))
     fig.update_layout(title='3D Plot of Points', scene=dict(xaxis=dict(title='X-axis'),
                                                          yaxis=dict(title='Y-axis'),
-                                                         zaxis=dict(title='Z-axis')))
+                                                         zaxis=dict(title='Z-axis'),
+                                                         aspectmode='cube'))
     fig.show()
+
+def get_stress(dab):
+    X=[]
+    d_e_list=[]
+    stress=[]
+    N=dab.shape[0]
+    for i in range(N-1):
+        X=MDS(i+1,dissimilarity='euclidean').fit_transform(dab)
+        d_e_list.append(euclidean_distance(X))
+
+    for i in range(N-1):
+        d_e=d_e_list[i]
+        p1=sum([dab[p][q]*d_e[p][q] for p in range(N) for q in range(N)])**2
+        p2=sum([dab[p][q]**2 for p in range(N) for q in range(N)])
+        p3=sum([d_e[p][q]**2 for p in range(N) for q in range(N)])
+        stress.append(np.sqrt(1-(p1/(p2*p3))))
+
+    plt.scatter(range(len(stress)),stress)
+    plt.title("Stress")
+    plt.ylabel("Stress")
+    plt.show()
 
 def load_I(file_name):
     outputs_dir = "outputs"
@@ -1050,6 +1074,48 @@ def MDS_from_state(state,N=12,cuttoff=0.3,file_name="no_file_name"):
 
     plot_3D_points(Xab)
 
+def d_from_state(state,N=12,file_name="no_file_name"):
+    
+    rho=get_full_density_matrix(state)
+    
+    I = get_real_I_matrix(N,rho)
+    print("Matrix of I")
+    plt.imshow(I, cmap='hot', interpolation='nearest')
+    plt.title("Heat map of I")
+    plt.colorbar()
+    plt.show()
+    outputs_dir = "outputs"
+    if not os.path.exists(outputs_dir):
+        os.makedirs(outputs_dir)
+    I_file_path = os.path.join(outputs_dir, "I" + file_name)
+    np.save(I_file_path, I)
+
+    define_graph(I)
+
+    w=re_weighing(I)
+    print("Martix of w")
+        # Save outputs in a .txt file
+    
+    w_file_path = os.path.join(outputs_dir, "w" + file_name)
+    np.save(w_file_path,w)
+    
+    plt.imshow(w, cmap='hot', interpolation='nearest')
+    plt.title("Heat map of w")
+    plt.colorbar()
+    plt.show()
+    print("re-scaled graph of mutual information")
+    define_graph(w)
+
+    dab=distance(w)
+    d_file_path = os.path.join(outputs_dir, "d" + file_name)
+    np.save(d_file_path,dab)
+
+    plt.imshow(dab, cmap='hot', interpolation='nearest')
+    plt.title("Heat map of dab")
+    plt.colorbar()
+    plt.show()
+    print("Graph of distances")
+    define_graph(dab)
 
 def mapData(dab):
     """takes a distance matrix, and maps it in 2D and 3D"""
@@ -1063,20 +1129,31 @@ def mapData(dab):
     X3=mds_from_d_3D.fit_transform(dab)
     # Plot the embedding, colored according to the class of the points
     #fig, ax = plt.subplots(figsize=(6, 6))
+    m1=np.max(abs(X2))
     plt.scatter(x=X2[:, 0], y=X2[:, 1])
     plt.title('2D mapping')
     for i in range(len(X2)):
         plt.text(X2[i, 0], X2[i, 1], y[i], fontsize=12)
+    plt.xlim([-m1, m1])
+    plt.ylim([-m1, m1])
     plt.show()
 
     #scatter = sns.scatterplot(x=X[:, 0], y=X[:, 1])
     
-    
+    m=np.max(abs(X3))
+
     fig = go.Figure(data=go.Scatter3d(x=X3[:, 0], y=X3[:, 1], z=X3[:, 2], mode='markers'))
     fig.update_layout(title='3D Plot of Points', scene=dict(xaxis=dict(title='X-axis'),
                                                          yaxis=dict(title='Y-axis'),
                                                          zaxis=dict(title='Z-axis')))
-        # Add labels to the scatter plot
+    fig.update_layout(
+    scene=dict(
+        xaxis=dict(range=[-m, m]),
+        yaxis=dict(range=[-m, m]),
+        zaxis=dict(range=[-m, m]),
+        aspectmode='cube'))
+    
+    # Add labels to the scatter plot
     for i in range(len(X3)):
         fig.add_trace(
             go.Scatter3d(
