@@ -41,7 +41,6 @@ def operator_from_indexes(indexes, dtype='float64'):
         op = op.real
     return coo_matrix(op, dtype=dtype)
 
-
 def Hab(Jab, a, b):
     """
     return the hamiltonian corresponding to a particular interraction type, eg XZ:
@@ -89,6 +88,24 @@ def H_from_couplings_given(Jab):
     for a,b in [(1,3),(1,1),(2,2),(3,3),(3,1)]:
         H += Hab(Jab, a, b)
     return H
+
+def buildH(folder, N, k):
+    """
+    build the hamitonian corresponding to the kth sample of size N from a particular folder
+    folder is of the form ensemble_model
+    """
+    path = '{}/{}'.format(folder, N)
+    labels = np.loadtxt(path+'/labels.txt')
+    labels = np.array(labels, dtype=int)
+    couplings = np.loadtxt(path+'/couplings.txt')[k] #select the kth sample from the couplings
+    H = np.zeros((2**N,2**N))
+    for i in range(len(labels)):
+        tau = operator_from_indexes(labels[i])
+        H[tau.row, tau.col] += couplings[i]*tau.data
+    return H
+
+
+
 
 def get_eigenstates(H):
     eigenvalues, eigenvectors = np.linalg.eigh(H)
@@ -1116,6 +1133,53 @@ def d_from_state(state,N=12,file_name="no_file_name"):
     plt.show()
     print("Graph of distances")
     define_graph(dab)
+
+def d_from_H(H,state_number,N=12,file_name="no_file_name"):
+    
+    eigenvalues, eigenvectors = np.linalg.eigh(H)
+    print("found eig")
+    rho=get_full_density_matrix(eigenvectors[state_number])
+    print("defined rho")
+    I = get_real_I_matrix(N,rho)
+    print("Got I")
+    plt.imshow(I, cmap='hot', interpolation='nearest')
+    plt.title("Heat map of I")
+    plt.colorbar()
+    plt.show()
+    outputs_dir = "outputs"
+    if not os.path.exists(outputs_dir):
+        os.makedirs(outputs_dir)
+    I_file_path = os.path.join(outputs_dir, "I" + file_name)
+    np.save(I_file_path, I)
+
+    define_graph(I)
+
+    w=re_weighing(I)
+    print("Martix of w")
+        # Save outputs in a .txt file
+    
+    w_file_path = os.path.join(outputs_dir, "w" + file_name)
+    np.save(w_file_path,w)
+    
+    plt.imshow(w, cmap='hot', interpolation='nearest')
+    plt.title("Heat map of w")
+    plt.colorbar()
+    plt.show()
+    print("re-scaled graph of mutual information")
+    define_graph(w)
+
+    dab=distance(w)
+    d_file_path = os.path.join(outputs_dir, "d" + file_name)
+    np.save(d_file_path,dab)
+
+    plt.imshow(dab, cmap='hot', interpolation='nearest')
+    plt.title("Heat map of dab")
+    plt.colorbar()
+    plt.show()
+    print("Graph of distances")
+    define_graph(dab)
+
+
 
 def mapData(dab):
     """takes a distance matrix, and maps it in 2D and 3D"""
