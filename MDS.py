@@ -498,7 +498,11 @@ def calculate_X(B):
     N = np.shape(B)[0]
     X = np.zeros((N, N))
 
-    eigenvalues, eigenvectors = np.linalg.eig(B)
+    eigenvalues, eigenvectors = np.linalg.eig(B) #TODO sort eigenvalues first, it doesn't do that naturaly.
+    eigenvalues,eigenvectors=np.linalg.eig(B)
+    idx = eigenvalues.argsort()[::-1]   
+    eigenvalues = eigenvalues[idx]
+    eigenvectors=eigenvectors[idx]
 
     eigenvalues_sign = np.zeros((N, 1))
     for i in range(N):
@@ -560,7 +564,7 @@ def plot_3D_points(X):
                                                          aspectmode='cube'))
     fig.show()
 
-def get_stress(dab):
+def get_stress(dab,plot=True):
     X=[]
     d_e_list=[]
     stress=[]
@@ -575,11 +579,28 @@ def get_stress(dab):
         p2=sum([dab[p][q]**2 for p in range(N) for q in range(N)])
         p3=sum([d_e[p][q]**2 for p in range(N) for q in range(N)])
         stress.append(np.sqrt(1-(p1/(p2*p3))))
+    if plot:
+        plt.scatter(range(len(stress)),stress)
+        plt.title("Stress")
+        plt.ylabel("Stress")
+        plt.show()
+    else:
+        return stress
 
-    plt.scatter(range(len(stress)),stress)
-    plt.title("Stress")
-    plt.ylabel("Stress")
-    plt.show()
+def get_eigenvalues_B_from_dab(dab,N,file_name,plot=True):
+
+    mds_from_d_N_ = MDS(N-1,dissimilarity='euclidean')
+    XN_=mds_from_d_N_.fit_transform(dab)
+    B=XN_@T(XN_)
+    eigenvalues,eigenvectors=np.linalg.eig(B)
+    idx = eigenvalues.argsort()[::-1]   
+    eigenvalues = eigenvalues[idx]
+    if plot:
+        plt.scatter(range(len(eigenvalues)),eigenvalues)
+        plt.title(f"Eigenvalues of B for an N-1 dimensional embedding for {file_name}")
+        plt.show()
+    else:
+        return eigenvalues
 
 def load_I(file_name):
     outputs_dir = "outputs"
