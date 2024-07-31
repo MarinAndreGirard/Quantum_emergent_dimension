@@ -1200,6 +1200,47 @@ def d_from_H(H,state_number,N=12,file_name="no_file_name",outputs=True):
         print("Graph of distances")
         define_graph(dab)
 
+def d_from_couplings(N,k,file_name="no_file_name",outputs=True):
+    letters = ['1', 'X', 'Y', 'Z']
+    J = np.loadtxt('couplings/{}/{}_{}{}.txt'.format(N, k, letters[2], letters[2]))
+    #print("Got I")
+    if outputs:
+        plt.imshow(J, cmap='hot', interpolation='nearest')
+        plt.title("Heat map of I")
+        plt.colorbar()
+        plt.show()
+    outputs_dir = "outputs"
+    if not os.path.exists(outputs_dir):
+        os.makedirs(outputs_dir)
+    I_file_path = os.path.join(outputs_dir, "I" + file_name)
+    np.save(I_file_path, J)
+
+    define_graph(J)
+
+    w=re_weighing(J)
+    
+    w_file_path = os.path.join(outputs_dir, "w" + file_name)
+    np.save(w_file_path,w)
+    if outputs:
+        plt.imshow(w, cmap='hot', interpolation='nearest')
+        plt.title("Heat map of w")
+        plt.colorbar()
+        plt.show()
+        print("re-scaled graph of mutual information")
+        define_graph(w)
+
+    dab=distance(w)
+    d_file_path = os.path.join(outputs_dir, "d" + file_name)
+    np.save(d_file_path,dab)
+
+    if outputs:
+        plt.imshow(dab, cmap='hot', interpolation='nearest')
+        plt.title("Heat map of dab")
+        plt.colorbar()
+        plt.show()
+        print("Graph of distances")
+        define_graph(dab)
+
 def mapData(dab, plot=True):
     """takes a distance matrix, and maps it in 2D and 3D"""
     #Using https://stackabuse.com/guide-to-multidimensional-scaling-in-python-with-scikit-learn/
