@@ -1155,18 +1155,19 @@ def d_from_state(state,N=12,file_name="no_file_name"):
     print("Graph of distances")
     define_graph(dab)
 
-def d_from_H(H,state_number,N=12,file_name="no_file_name"):
+def d_from_H(H,state_number,N=12,file_name="no_file_name",outputs=True):
     
     eigenvalues, eigenvectors = np.linalg.eigh(H)
-    print("found eig")
+    #print("found eig")
     rho=get_full_density_matrix(eigenvectors[state_number])
-    print("defined rho")
+    #print("defined rho")
     I = get_real_I_matrix(N,rho)
-    print("Got I")
-    plt.imshow(I, cmap='hot', interpolation='nearest')
-    plt.title("Heat map of I")
-    plt.colorbar()
-    plt.show()
+    #print("Got I")
+    if outputs:
+        plt.imshow(I, cmap='hot', interpolation='nearest')
+        plt.title("Heat map of I")
+        plt.colorbar()
+        plt.show()
     outputs_dir = "outputs"
     if not os.path.exists(outputs_dir):
         os.makedirs(outputs_dir)
@@ -1176,33 +1177,30 @@ def d_from_H(H,state_number,N=12,file_name="no_file_name"):
     define_graph(I)
 
     w=re_weighing(I)
-    print("Martix of w")
-        # Save outputs in a .txt file
     
     w_file_path = os.path.join(outputs_dir, "w" + file_name)
     np.save(w_file_path,w)
-    
-    plt.imshow(w, cmap='hot', interpolation='nearest')
-    plt.title("Heat map of w")
-    plt.colorbar()
-    plt.show()
-    print("re-scaled graph of mutual information")
-    define_graph(w)
+    if outputs:
+        plt.imshow(w, cmap='hot', interpolation='nearest')
+        plt.title("Heat map of w")
+        plt.colorbar()
+        plt.show()
+        print("re-scaled graph of mutual information")
+        define_graph(w)
 
     dab=distance(w)
     d_file_path = os.path.join(outputs_dir, "d" + file_name)
     np.save(d_file_path,dab)
 
-    plt.imshow(dab, cmap='hot', interpolation='nearest')
-    plt.title("Heat map of dab")
-    plt.colorbar()
-    plt.show()
-    print("Graph of distances")
-    define_graph(dab)
+    if outputs:
+        plt.imshow(dab, cmap='hot', interpolation='nearest')
+        plt.title("Heat map of dab")
+        plt.colorbar()
+        plt.show()
+        print("Graph of distances")
+        define_graph(dab)
 
-
-
-def mapData(dab):
+def mapData(dab, plot=True):
     """takes a distance matrix, and maps it in 2D and 3D"""
     #Using https://stackabuse.com/guide-to-multidimensional-scaling-in-python-with-scikit-learn/
     mds_from_d_3D = MDS(3,dissimilarity='euclidean')
@@ -1215,46 +1213,50 @@ def mapData(dab):
     # Plot the embedding, colored according to the class of the points
     #fig, ax = plt.subplots(figsize=(6, 6))
     m1=np.max(abs(X2))
-    plt.scatter(x=X2[:, 0], y=X2[:, 1])
-    plt.title('2D mapping')
-    for i in range(len(X2)):
-        plt.text(X2[i, 0], X2[i, 1], y[i], fontsize=12)
-    plt.xlim([-m1, m1])
-    plt.ylim([-m1, m1])
-    plt.show()
+    m=np.max(abs(X3))
+    if plot:
+        plt.scatter(x=X2[:, 0], y=X2[:, 1])
+        plt.title('2D mapping')
+        for i in range(len(X2)):
+            plt.text(X2[i, 0], X2[i, 1], y[i], fontsize=12)
+        plt.xlim([-m1, m1])
+        plt.ylim([-m1, m1])
+        plt.show()
 
     #scatter = sns.scatterplot(x=X[:, 0], y=X[:, 1])
     
-    m=np.max(abs(X3))
+        
 
-    fig = go.Figure(data=go.Scatter3d(x=X3[:, 0], y=X3[:, 1], z=X3[:, 2], mode='markers'))
-    fig.update_layout(title='3D Plot of Points', scene=dict(xaxis=dict(title='X-axis'),
-                                                         yaxis=dict(title='Y-axis'),
-                                                         zaxis=dict(title='Z-axis')))
-    fig.update_layout(
-    scene=dict(
-        xaxis=dict(range=[-m, m]),
-        yaxis=dict(range=[-m, m]),
-        zaxis=dict(range=[-m, m]),
-        aspectmode='cube'))
-    
-    # Add labels to the scatter plot
-    for i in range(len(X3)):
-        fig.add_trace(
-            go.Scatter3d(
-                x=[X3[i, 0]],
-                y=[X3[i, 1]],
-                z=[X3[i, 2]],
-                mode='text',
-                text=y[i],
-                textfont=dict(
-                    size=12,
-                    color='black'
-                ),
-                hoverinfo='none'
+        fig = go.Figure(data=go.Scatter3d(x=X3[:, 0], y=X3[:, 1], z=X3[:, 2], mode='markers'))
+        fig.update_layout(title='3D Plot of Points', scene=dict(xaxis=dict(title='X-axis'),
+                                                            yaxis=dict(title='Y-axis'),
+                                                            zaxis=dict(title='Z-axis')))
+        fig.update_layout(
+        scene=dict(
+            xaxis=dict(range=[-m, m]),
+            yaxis=dict(range=[-m, m]),
+            zaxis=dict(range=[-m, m]),
+            aspectmode='cube'))
+        
+        # Add labels to the scatter plot
+        for i in range(len(X3)):
+            fig.add_trace(
+                go.Scatter3d(
+                    x=[X3[i, 0]],
+                    y=[X3[i, 1]],
+                    z=[X3[i, 2]],
+                    mode='text',
+                    text=y[i],
+                    textfont=dict(
+                        size=12,
+                        color='black'
+                    ),
+                    hoverinfo='none'
+                )
             )
-        )
-    fig.show()
+        fig.show()
+    else:
+        return X2,X3,m1,m
 
 
 
