@@ -16,6 +16,9 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from sklearn.manifold import MDS
+import pennylane as qml
+from pennylane import math
+
 
 np.set_printoptions(edgeitems=10)  # Set the number of elements at the beginning and end of each dimension when repr is called
 np.set_printoptions(threshold=1000)  # Set the total number of array elements which trigger summarization rather than full repr
@@ -24,6 +27,9 @@ np.set_printoptions(precision=4)  # Set the precision for floating point output
 ar = np.array
 kr = np.kron
 T = np.transpose
+
+
+####CODE BY NICOLAS LOIZEAU
 
 paulis = [np.eye(2), np.array([[0,1],[1,0]]), 1j*np.array([[0,-1],[1,0]]), np.array([[1,0],[0,-1]])]
 paulis_sparse = [coo_matrix(p, dtype='complex128') for p in paulis]
@@ -103,6 +109,228 @@ def buildH(folder, N, k):
         tau = operator_from_indexes(labels[i])
         H[tau.row, tau.col] += couplings[i]*tau.data
     return H
+
+import numpy as np
+import qutip as qt
+
+
+def permutation_matrix(permutation):
+    """
+    permutation_matrix([1,0,2])
+    [[0. 1. 0.]
+     [1. 0. 0.]
+     [0. 0. 1.]]
+    """
+    n = len(permutation)
+    P = np.identity(n)
+    P[:,np.arange(n)] = P[:,permutation]
+    return P
+
+def bool2int(x):
+    y = 0
+    for i,j in enumerate(x):
+        y += j<<i
+    return y
+
+def qubit_permutation(permutation):
+    """
+    qubit permutation to basis permutation. Input size : n, output size : 2**n
+    qubit_permutation([1,0,2])
+    [0,1,4,5,2,3,6,7]
+    ->
+    """
+    n = len(permutation)
+    p = np.arange(2**n)
+    p = [np.binary_repr(p_, width=n) for p_ in p]
+    p = [[int(p_[i]) for i in permutation] for p_ in p]
+    p = [bool2int(p_[::-1]) for p_ in p]
+    return p
+
+def swap(permutation):
+    """
+    qubit swap matrix
+    """
+    permutation = qubit_permutation(permutation)
+    return permutation_matrix(permutation)
+
+def permute(qobj, permutation):
+    """
+    permute the qubits of a quantum object
+    """
+    qobj = np.array(qobj)
+    permutation = np.array(permutation)
+    if not np.array_equal(np.sort(permutation), np.arange(len(permutation))):
+        raise ValueError('permutation is not a permutation')
+    if len(qobj.shape) == 1:
+        p = inversep(qubit_permutation(permutation))
+        return qobj[p]
+    elif len(qobj.shape) == 2:
+        S = swap(permutation)
+        return S@qobj@S.T
+    else:
+        raise ValueError('qobj is not a vector nor a matrix')
+
+def inversep(permutation):
+    x = np.empty_like(permutation)
+    x[permutation] = np.arange(len(permutation))
+    return x
+
+def gate(U, i, j, n):
+    """
+    U: 2-qubit gate
+    create a gate that applies U to i,j on a n-qubit space
+    """
+    U = np.kron(U, np.identity(2**n-4))
+    permutation = np.arange(n)
+    permutation[0] = i
+    permutation[1] = j
+    permutation[i] = 0
+    permutation[j] = 1
+    print(permutation)
+    return permute(U, permutation)
+
+def ptrace(qobj, keep):
+    n = int(np.log2(len(qobj)))
+    qobj = qt.Qobj(qobj, dims=[[2]*n, [2]*n])
+    return qobj.ptrace(keep).full()
+
+def ptraceA(AB, n, m):
+    """
+    trace out system A of size n, keep system B or size m
+    """
+    return np.trace(AB.reshape(2**n,2**m,2**n,2**m), axis1=0, axis2=2)
+
+def ptraceB(AB, n, m):
+    """
+    trace out system B of size n, keep system A or size m
+    """
+    return np.trace(AB.reshape(2**n,2**m,2**n,2**m), axis1=1, axis2=3)
+
+def ptraceAdiag(E, n, m):
+    return E.reshape(2**n,2**m).sum(axis=0)
+
+def ptraceBdiag(E, n, m):
+    return E.reshape(2**n,2**m).sum(axis=1)
+
+def ptracefirst(psi):
+    """
+    psi : a ket
+    return : the density matrix of the first qubit
+    """
+    psia = psi[:len(psi)//2]
+    psib = psi[len(psi)//2:]
+    return np.array([[np.inner(psia,psia),np.inner(psia,psib)],
+                     [np.inner(psib,psia),np.inner(psib,psib)]])
+
+def ptracei(psi,i):
+    N = int(np.log2(len(psi)))
+    perm = list(range(N))
+    del perm[i]
+    perm = [i]+perm
+    psi = permute(psi, perm)
+    return ptracefirst(psi)
+
+
+def ptraceApure(psi, n, m):
+    """
+    trace out system A of size n, keep system B or size m
+    equivalent to ptraceA(np.outer(psi, psi.conj()), n, m)
+    """
+    blocks = len(psi)//2**m
+    rho = 0
+    for i in range(blocks):
+        psii = psi[i*2**m:(i+1)*2**m]
+        rho += np.outer(psii, psii.conj())
+    return rho
+
+def ptraceBpure(psi, n, m):
+    """
+    trace out system B of size m, keep system A or size n
+    equivalent to ptraceA(np.outer(psi, psi.conj()), n, m)
+    """
+    blocks = len(psi)//2**n
+    rho = 0
+    for i in range(blocks):
+        psii = psi[i::2**m]
+        rho += np.outer(psii, psii.conj())
+    return rho
+
+
+
+
+def ptraceAouter(psi1, psi2, n, m):
+    """
+    tr_A(|psi1><psi2|)
+    """
+    blocks = len(psi1)//2**m
+    rho = 0
+    for i in range(blocks):
+        psii1 = psi1[i*2**m:(i+1)*2**m]
+        psii2 = psi2[i*2**m:(i+1)*2**m]
+        rho += np.outer(psii1, psii2.conj())
+    return rho
+
+
+def ptraceBouter(psi1, psi2, n, m):
+    """
+    tr_B(|psi1><psi2|)
+    """
+    blocks = len(psi1)//2**n
+    rho = 0
+    for i in range(blocks):
+        psii1 = psi1[i::2**m]
+        psii2 = psi2[i::2**m]
+        rho += np.outer(psii1, psii2.conj())
+    return rho
+
+
+
+def partialapplyA(rho, psi, n, m):
+    """rho_A |psi>_AB"""
+    psi = psi.reshape(2**n,2**m)
+    return (rho@psi).flatten()
+
+
+def partialapplyB(rho, psi, n, m):
+    """rho_B |psi>_AB"""
+    psi = psi.reshape(2**n,2**m)
+    return (psi@rho.T).flatten()
+
+
+
+
+if __name__ == '__main__':
+    from numpy.linalg import norm
+    from itertools import permutations
+    a = np.random.random((2**3, 2**3))
+    a = a+a.T
+    b = qt.Qobj(a, dims=[[2,2,2], [2,2,2]])
+    for permutation in permutations(range(3)):
+        a2 = permute(a, permutation)
+        b2 = b.permute(permutation).full()
+        d = norm(a2-b2)
+        if d > 1e-15:
+            print(permutation, d)
+    print(ptrace(a, [0,1]))
+
+
+
+
+
+
+
+####CODE FROM ME
+
+
+#4 options for partial trace. my code or Nicolas's code. Or the pennylane code, or the SVD method suggested by charles
+
+
+
+
+
+
+
+
 
 
 
@@ -187,7 +415,27 @@ def partial_ij(state, i,j,N=12):
         rho_2=rho_1
     return rho_2
 
-def partial_ij_from_rho(rho, i,j,N=12):
+def create_custom_list(i, j, N):
+    # Initialize the result list with i and j
+    result = [i, j]
+    
+    # Iterate through the range from 0 to N
+    for num in range(N):
+        # Add the number to the list if it's not i or j
+        if num != i and num != j:
+            result.append(num)
+    
+    return result
+
+def partial_ij_from_rho_new(rho,i,j,N): 
+    n=2
+    m=N-n
+    perm_list=create_custom_list(i,j,N)
+    rho_permut = permute(rho, perm_list)
+    rho_ij=ptraceB(rho_permut, n , m )
+    return rho_ij.astype(complex)
+
+def partial_ij_from_rho(rho, i,j,N=12): #   RETIRED
     kr = np.kron
     ar=np.array
     T=np.transpose
@@ -354,12 +602,39 @@ def get_S_matrix(N,state):
             print(f"done for {i},{j}")
     return S
 
+
+def get_real_I_matrix_from_state_vec(N,psi):
+    I=np.zeros((N,N))
+    for i in range(N):
+        for j in range(i+1,N):
+            #To compute the entropy between subsystem i and subsystem j I need to construct their respective density matrices. I need to partial trace everything but i and j. how do I do that?
+            #list_ = [x for x in range(N) if x != i and x != j]
+            rho=qml.math.reduce_statevector(psi, [i,j], check_state=False, c_dtype='complex64')
+            #rho=qml.math.partial_trace(rho_full,list_)
+            #rho=partial_ij_from_rho_new(rho_full, i, j, N)
+            #print("got rhoij")
+            I[i][j]=mutual_info(rho)
+            I[j][i]=I[i][j]
+            print(f"done for {i},{j}")
+        min=np.min(I+np.eye(N))
+    temp = (N,N)
+    ones=np.ones(temp)-np.eye(N)
+    if min==0:
+        I_eps=0.000001*ones
+        I=I+I_eps
+    else:
+        I=I+min*ones
+    return I
+
 def get_real_I_matrix(N,rho_full):
     I=np.zeros((N,N))
     for i in range(N):
         for j in range(i+1,N):
             #To compute the entropy between subsystem i and subsystem j I need to construct their respective density matrices. I need to partial trace everything but i and j. how do I do that?
-            rho=partial_ij_from_rho(rho_full, i, j, N)
+            list_ = [x for x in range(N) if x != i and x != j]
+            #rho=qml.math.partial_trace(rho_full,list_)
+            #rho=partial_ij_from_rho_new(rho_full, i, j, N)
+            #print("got rhoij")
             I[i][j]=mutual_info(rho)
             I[j][i]=I[i][j]
             print(f"done for {i},{j}")
@@ -378,7 +653,7 @@ def get_I_matrix(N,rho_full):
     for i in range(N):
         for j in range(i+1,N):
             #To compute the entropy between subsystem i and subsystem j I need to construct their respective density matrices. I need to partial trace everything but i and j. how do I do that?
-            rho=partial_ij_from_rho(rho_full, i, j, N)
+            rho=partial_ij_from_rho_new(rho_full, i, j, N)
             I[i][j]=mutual_info_approx(rho)
             I[j][i]=I[i][j]
             print(f"done for {i},{j}")
@@ -397,7 +672,7 @@ def get_correl_matrix(N,rho_full):
     for i in range(N):
         for j in range(i+1,N):
             #To compute the entropy between subsystem i and subsystem j I need to construct their respective density matrices. I need to partial trace everything but i and j. how do I do that?
-            rho=partial_ij_from_rho(rho_full, i, j, N)
+            rho=partial_ij_from_rho_new(rho_full, i, j, N)
             C[i][j]=correlation(rho)
             C[j][i]=C[i][j]
             print(f"done for {i},{j}")
@@ -1158,11 +1433,13 @@ def d_from_state(state,N=12,file_name="no_file_name"):
 def d_from_H(H,state_number,N=12,file_name="no_file_name",outputs=True):
     
     eigenvalues, eigenvectors = np.linalg.eigh(H)
-    #print("found eig")
-    rho=get_full_density_matrix(eigenvectors[state_number])
+    print("found eig")
+    psi=eigenvectors[state_number]
+    #rho=get_full_density_matrix(eigenvectors[state_number])
     #print("defined rho")
-    I = get_real_I_matrix(N,rho)
-    #print("Got I")
+    I = get_real_I_matrix_from_state_vec(N,psi)
+    #I = get_real_I_matrix(N,rho)
+    print("Got I")
     if outputs:
         plt.imshow(I, cmap='hot', interpolation='nearest')
         plt.title("Heat map of I")
@@ -1298,8 +1575,6 @@ def mapData(dab, plot=True):
         fig.show()
     else:
         return X2,X3,m1,m
-
-
 
 
 
