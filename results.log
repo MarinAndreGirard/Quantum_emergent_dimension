@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.3.2)  6 AUG 2024 19:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.3.2)  6 AUG 2024 23:47
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -455,103 +455,81 @@ If that doesn't work, type  X <return>  to quit.
 
 [1
 
-{/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:136: Missing $ inserted.
+{/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
+/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:155: Missing $ inserted.
 <inserted text> 
                 $
-l.136 case goe_
-               local2 N=12 100 samples
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:138: Missing $ inserted.
-<inserted text> 
-                $
-l.138 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-
-Overfull \hbox (18.45943pt too wide) in paragraph at lines 135--138
-[]\OT1/cmr/m/n/10 Case goexxyyzz N=12 100 sam-ples case goe$[]\OML/cmm/m/it/10 ocal\OT1/cmr/m/n/10 2\OML/cmm/m/it/10 N \OT1/cmr/m/n/10 = 12100\OML/cmm/m/it/10 samplescasegoe[]ocalN \OT1/cmr/m/n/10 = 1422\OML/cmm/m/it/10 samples$ 
- []
-
-[2]
-/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:163: Missing $ inserted.
-<inserted text> 
-                $
-l.163 ...hz.ch/wp-content/uploads/2021/08/Lecture_
+l.155 ...hz.ch/wp-content/uploads/2021/08/Lecture_
                                                   on_thermal_states1.pdf pap...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:170: Missing $ inserted.
+/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:162: Missing $ inserted.
 <inserted text> 
                 $
-l.170 
+l.162 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (1032.04732pt too wide) in paragraph at lines 156--170
+Overfull \hbox (1032.04732pt too wide) in paragraph at lines 148--162
 \OT1/cmr/m/n/10 https://qthermo.ethz.ch/wp-content/uploads/2021/08/Lecture$[]\OML/cmm/m/it/10 n[]hermal[]tates\OT1/cmr/m/n/10 1\OML/cmm/m/it/10 :pdfpaperonhowlocalityoftheHamiltonianconstraintsthephysics\OT1/cmr/m/n/10 "\OML/cmm/m/it/10 Theonlythingtheyhaveincommonisthelocalityoftheinteractions:Wethusaimtounderstandmathematicallyhowdoesthisfactaloneuniversallyconstrainthephysics:\OT1/cmr/m/n/10 "\OML/cmm/m/it/10 Noteonthermalstate \OT1/cmr/m/n/10 :
  []
 
 
-Overfull \hbox (210.6368pt too wide) in paragraph at lines 156--170
+Overfull \hbox (210.6368pt too wide) in paragraph at lines 148--162
 \OML/cmm/m/it/10 intuitivelytheyarelocal\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 havecorrealtionsthatdecayindis\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 beacusetheexponentiationofalocalHcausustermsthatareproductsoflocalterms\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ienon \OMS/cmsy/m/n/10 ^^@
  []
 
 
-Overfull \hbox (196.2709pt too wide) in paragraph at lines 156--170
+Overfull \hbox (196.2709pt too wide) in paragraph at lines 148--162
 \OML/cmm/m/it/10 local\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 tohaveahigherpowerof \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 betainfrontofthem:Needtoreadthatwell \OT1/cmr/m/n/10 : \OML/cmm/m/it/10 itseemstosaythatanylocalHamiltonianwillhavealocalthermalstate \OT1/cmr/m/n/10 :
  []
 
 
-Overfull \hbox (230.01448pt too wide) in paragraph at lines 156--170
+Overfull \hbox (230.01448pt too wide) in paragraph at lines 148--162
 \OML/cmm/m/it/10 Noteannxndistancematrixcanbeperfectlyfitinann \OMS/cmsy/m/n/10 ^^@ \OT1/cmr/m/n/10 1\OML/cmm/m/it/10 dimensinoalspace; thinksimplexietriangles:Itsalluptoarotation:sothecoordinatematrixnx\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 n \OMS/cmsy/m/n/10 ^^@
  []
 
 
-Overfull \hbox (629.75255pt too wide) in paragraph at lines 156--170
+Overfull \hbox (629.75255pt too wide) in paragraph at lines 148--162
 \OT1/cmr/m/n/10 1)\OML/cmm/m/it/10 isdefienduptotheapplicationofarotationmatrixinn \OMS/cmsy/m/n/10 ^^@ \OT1/cmr/m/n/10 1\OML/cmm/m/it/10 dimorsomt:thisithinkdoesn[]tcahngeitseigenvalues:Soitmightstillbepossibletosomehowgetanestimateforhowmanydominantdimensionaretherebylookingattheeigenvaluesofthenx\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 n \OMS/cmsy/m/n/10 ^^@
  []
 
 
-Overfull \hbox (644.78214pt too wide) in paragraph at lines 156--170
+Overfull \hbox (644.78214pt too wide) in paragraph at lines 148--162
 \OT1/cmr/m/n/10 1)\OML/cmm/m/it/10 coordintematrix:Ithinktheeigenvalueskeepinformationthatindependantofrotation:YoudontlookattheeigenvaluesofX\OT1/cmr/m/n/10 !!\OML/cmm/m/it/10 youlookattheeigenvaluesofBwhichisamatrixdefinedfromXandtotallyindepenadnofrotations:Mereologycostfunction \OT1/cmr/m/n/10 :
  []
 
 
-Overfull \hbox (532.98752pt too wide) in paragraph at lines 156--170
+Overfull \hbox (532.98752pt too wide) in paragraph at lines 148--162
 \OML/cmm/m/it/10 Basicallyweneedacostfunctiononlocalityandclassicality:Wecouldaddawaytogetintegerdimension:Addaconstraintthatthestateweareworkingwithbeapointerstate:Whataretheconstraintson\OT1/cmr/m/n/10 ?\OML/cmm/m/it/10 theHamiltonianorthestate\OT1/cmr/m/n/10 ?$ 
  []
 
-/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:188: Missing $ inserted.
+/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:180: Missing $ inserted.
 <inserted text> 
                 $
-l.188 ...did and ask if it works fine...: see get_
+l.180 ...did and ask if it works fine...: see get_
                                                   real_I_matrix, see get_pat...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:188: Double subscript.
-l.188 ... ask if it works fine...: see get_real_I_
+/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:180: Double subscript.
+l.180 ... ask if it works fine...: see get_real_I_
                                                   matrix, see get_path, see ...
 I treat `x_1_2' essentially like `x_1{}_2'.
 
-/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:191: Missing $ inserted.
+/Users/maringirard/Downloads/Quantum-Localization-main/results.tex:183: Missing $ inserted.
 <inserted text> 
                 $
-l.191 
+l.183 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (334.27953pt too wide) in paragraph at lines 179--191
+Overfull \hbox (334.27953pt too wide) in paragraph at lines 171--183
 \OML/cmm/m/it/10 Doescouplingstrenghtgiveusanything\OT1/cmr/m/n/10 ?\OML/cmm/m/it/10 Howisitbetterorworsethantheentanglementstructure: \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 correlationfunctionvsmutualinformationthing:doigetdifferencesofresult\OT1/cmr/m/n/10 ?$ 
  []
 
@@ -572,9 +550,9 @@ Here is how much of TeX's memory you used:
  31422 multiletter control sequences out of 15000+600000
  526050 words of font info for 85 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,11n,76p,391b,443s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,11n,76p,391b,441s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on results.pdf (4 pages, 131204 bytes).
+Output written on results.pdf (4 pages, 130911 bytes).
 PDF statistics:
  83 PDF objects out of 1000 (max. 8388607)
  56 compressed objects within 1 object stream

@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1722966706 "/Users/maringirard/Downloads/Quantum-Localization-main/results.tex" "results.pdf" "results" 1722966707 2
-  "/Users/maringirard/Downloads/Quantum-Localization-main/results.tex" 1722966704 11777 bdee8238c6dbc6dc249f44ead08def09 ""
+["pdflatex"] 1722980868 "/Users/maringirard/Downloads/Quantum-Localization-main/results.tex" "results.pdf" "results" 1722980869 2
+  "/Users/maringirard/Downloads/Quantum-Localization-main/results.tex" 1722980866 11615 cbcf73fb2ccd4c08b71c5a6e543a33a0 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy5.tfm" 1246382020 1120 1e8878807317373affa7f7bba4cf2f6a ""
   "/usr/local/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy6.tfm" 1246382020 1124 14ccf5552bc7f77ca02a8a402bea8bfb ""
@@ -124,9 +124,9 @@
   "/usr/local/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt" 1709404453 7883447 9a663140eda5e9d08d5a0a1b8200eb12 ""
   "/usr/local/texlive/2023/texmf.cnf" 1678822455 577 1b2b1af17af2508fb20dd85783af4050 ""
   "name" 0 -1 0 ""
-  "results.aux" 1722966707 957 66f4e8edcec58965c6607add388f8ee1 "pdflatex"
-  "results.out" 1722966707 653 bc3515232081019532485997fe149e15 "pdflatex"
-  "results.tex" 1722966704 11777 bdee8238c6dbc6dc249f44ead08def09 ""
+  "results.aux" 1722980869 957 66f4e8edcec58965c6607add388f8ee1 "pdflatex"
+  "results.out" 1722980869 653 bc3515232081019532485997fe149e15 "pdflatex"
+  "results.tex" 1722980866 11615 cbcf73fb2ccd4c08b71c5a6e543a33a0 ""
   (generated)
   "results.aux"
   "results.log"
