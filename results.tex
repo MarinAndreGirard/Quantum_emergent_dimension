@@ -90,8 +90,54 @@ $$X=(\sqrt{\lambda_1}v_1,\sqrt{\lambda_2}v_2...)$$
 
 note that Classical MDS does not work if B has negative eigenvalues. Which is does.
 
+The stress is the sum of squared distance of the disparities and the distances for all constrained points.
+
+The stress as a function of embedding dimension is,
+\begin{figure}
+    
+\end{figure}
+
+We also observe interesting patterns in the 2 and 3D embedding.
+\begin{figure}
+    
+\end{figure}
+In 3D we that the position of our qubits minimizing the stress looks like a sphere. We can test how close to a sphere it is by fitting the points to a sphere centered at 0 and calculating the normalized sum of root mean square error. Another measure is to count the number of points in a sphere of radius 0.5.
+We do that and compare it to the 3D MDS embedding of a random distance matrix (gaussian real positive symmetric, with a zero diagonal). This causes am embedding that looks more like a ball, and we confirm that by noting that it has a higher RMSE and a lot more points in a sphere of r=0.5.
+
+In 2D we also note a structure in the form of 2 concentric rings.
+
+In conclusion, while the plot of stress does not give a clean cut-off nfrom which we can read a dominant dimension, there seems to be a visible structure to the emnbedding in 3 and 2D.
+Not sure what to think of that.
 
 \subsection{MDS with mutual information}
+
+Following more closely the paper "Space from Hilbert Space: Recovering Geometry from Bulk Entanglement", we will see if working with the entanglement structure of a state gives us a dominant emergent dimension.
+
+The starting point is the same, we start from couplings that can be turned into a Hamiltonian. But we now find the ground state of the Hamiltonian and calculate its entanglement structure.
+
+We work with 2 different sets of couplings. Couplings for only xx, yy, zz, couplings for a general 2 local model including 1-local terms. We have N=12 qubits for the first one and both N=12 and N=14 for the more general model. 
+
+Specifically, for each pairs of qubits $i,j$, we partial trace all other qubits from the total state $\rho$ to find $\rho_{ij}$, then calculate the mutual information $I_{ij}=S(\rho_i)+S(\rho_j)-S(\rho_{ij})$.
+This defines a table of values $I$ which can be interpreted as a weighted graph.
+
+I is a table defined with zeros along the diagonal, so we take the minimum of all but these 0s and 
+
+We re-scale I imn the same we we rescaled J
+
+And we calculate the distance in the same way we did for J
+
+From the distances, we can also apply MDS and obtain stress as a function dimension as well as the shape the embedding takes in 2 and 3D.
+
+\begin{figure}
+    
+\end{figure}
+
+Case goexxyyzz N=12 100 samples
+case goe_local2 N=12 100 samples
+case goe_local N=14 22 samples
+
+
+
 
 \subsection*{Other stuff}
 
@@ -99,12 +145,58 @@ Add images
 Add what was before on the overleaf
 Add discussion points in my TODO.
 Make README ok.
+Interpret all graphs
 
 potential avenues of exploration. 
 Go to larger subsystem sizes. To computational expensive
 Define more complex cost functions.
 
+one of my results might be the fact that we get the same using the couplings and using the mutual information.
 
+--Something I have to keep in mind/things I have figured out
+-So in my ising 1/2 case I wasn't getting locality because the GS is trivial. But I got locality by looking at thermal states, which kind of have this phenomena of having imposed locality on them by the exponentiation diminishing the impact of products of local op. (see les diableretes notes.)
+Also maybe related, the area law is for the mutual info of thermal state.
+Maybe learn more about area laws. Do they only exist for thermal states?
+-We have a cool result where k-local Hamiltonians have Gapped GS, which have the special properties of having high entropy GS because of degeneracy. 
+And potentiall exponentially decreasing correlation functions in distance. 
+Does that tell us anything about our project? Wont we always have no-gapped Hamiltonians leading to no interesting entropy structure of the GS and no interesting exponentially decreasing correlations on which to base our distance?
+https://qthermo.ethz.ch/wp-content/uploads/2021/08/Lecture_on_thermal_states1.pdf paper on how locality of the Hamiltonian constraints the physics "The only thing they have in common is the locality of the interactions. We thus aim to understand mathematically how does this fact alone universally constrain the physics. "
+Note on thermal state: intuitively they are local (have correaltions that decay in dis) beacuse the exponentiation of a local H causus terms that are products of local terms (ie non-local) to have a higher power of -beta in front of them.
+Need to read that well: it seems to say that any local Hamiltonian will have a local thermal state: 
+Note an nxn distance matrix can be perfectly fit in an n-1 dimensinoal space, think simplex ie triangles. Its all up to a rotation. so the coordinate matrix nx(n-1) is defiend up to the application of a rotation matrix in n-1 dim or somt. 
+this i think doesn't cahnge its eigenvalues. So it might still be possible to somehow get an estimate for how many dominant dimension are there by looking at the eigenvalues of the nx(n-1) coordinte matrix. 
+I think the eigenvalues keep information that independant of rotation. You dont look at the eigenvalues of X!! you look at the eigenvalues of B which is a matrix defined from X and totally indepenadn of rotations.
+Mereology cost function: Basically we need a cost function on locality and classicality. We could add a way to get integer dimension. Add a constraint that the state we are working with be a pointer state. What are the constraints on? the Hamiltonian or the state?
+
+Results to share:
+-I get physical results
+-I get an empty sphere for the 2-local Hamiltonians, and a full sphere for a random distance matrix.
+-There seems to  be a cuttoff visible in N=14...
+
+
+My 2 and 3 D embedding for the couplings changed... is that right? check why it might have
+
+What i need to answer:
+-Can I get one of Charles's results?
+-Anything interesting to say for the thermal states?
+-Is there any emergent dimension from the 2x2 interation Hamiltonians? Sphere?
+-Make a clean Jupyter notebook for all to see.
+-Need to make a quick presentation of results for next meeting.
+-Idea of trying multiple cost functions... ie the idea of mereology cost function.... what is it?
+-Can we try multiple cost functions as Nicolas was suggesting?
+-Any local Hamiltonian will have  a local thermal state (https://arxiv.org/pdf/2104.04419) investigate that. is it the locality that we care about? is it interesting to check that our thermal states are local?
+-Would be nice to have a chat with someone to explain the simplifications I did and ask if it works fine...: see get_real_I_matrix, see get_path, see the rescaling.
+-Does coupling strenght give us anything? How is it better or worse than the entanglement structure.
+-correlation function vs mutual information thing. do i get differences of result?
+
+questions: 
+-which is better, the stress or the eigenvalues of B? I think its stress, since its optimized in every dimension.
+the eigenvalues of B give the relative importance of dimensions for a certain embeding, but we didn't optimize it for making the least amount of dimensions the most important. Unlike what is done for stress.
+I belive we see that in the fact that the slop of the stress function is usually steeper. But one thing i notice with the eigenvalues is that they give me more cutt-offs. especially in teh N=14 case...
+-Re-scaling functio carries dimension in it? or at least changes result?
+-Why are the eigenstates of Nicolas only real? Shouldn’t there be a complex part?
+-About the cost function: Do we want to impose locality and classicality? Does classicality imply locality? Does quantum have locality? not exactly the same as classical locality but still space time i think.
+-Does a rotation of the position vectors in XN-1 lead to a change in the eigenvalues of B?
 
 THe rescaling function might be biasing...
 

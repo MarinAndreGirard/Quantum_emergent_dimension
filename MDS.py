@@ -578,8 +578,10 @@ def mutual_info(rho):
     Sa=VN_simple(rho_a)
     Sb=VN_simple(rho_b)
     Sab=VN_simple(rho)
-    I = abs(Sa+Sb-Sab)
-
+    temp=Sa+Sb-Sab
+    if temp<0:
+        print("Warning, negative I value!")
+    I = abs(temp)
     return I
 
 
