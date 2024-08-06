@@ -1576,5 +1576,51 @@ def mapData(dab, plot=True):
     else:
         return X2,X3,m1,m
 
+def sphereFit(spX,spY,spZ):
+    #   Assemble the A matrix
+    spX = np.array(spX)
+    spY = np.array(spY)
+    spZ = np.array(spZ)
+    A = np.zeros((len(spX),4))
+    A[:,0] = spX*2
+    A[:,1] = spY*2
+    A[:,2] = spZ*2
+    A[:,3] = 1
+
+    #   Assemble the f matrix
+    f = np.zeros((len(spX),1))
+    f[:,0] = (spX*spX) + (spY*spY) + (spZ*spZ)
+    C, residules, rank, singval = np.linalg.lstsq(A,f)
+
+    #   solve for the radius
+    t = (C[0]*C[0])+(C[1]*C[1])+(C[2]*C[2])+C[3]
+    radius = math.sqrt(t)
+
+    # Calculate the residuals
+    fittedX = C[0]
+    fittedY = C[1]
+    fittedZ = C[2]
+    fitted_radius = radius
+
+    residuals = np.sqrt((spX - fittedX)**2 + (spY - fittedY)**2 + (spZ - fittedZ)**2) - fitted_radius
+    rmse = np.sqrt(np.mean(residuals**2))
+
+    return radius, C[0], C[1], C[2], rmse
+
+#Another simple way to compare them would be to see what the number of points in a sphere half the radius is.
+
+def count_points_in_sphere(X, Y, Z, radius):
+    # Convert X, Y, Z to numpy arrays if they are not already
+    X = np.array(X)
+    Y = np.array(Y)
+    Z = np.array(Z)
+    
+    # Calculate the distance from the origin for each point
+    distances = np.sqrt(X**2 + Y**2 + Z**2)
+    # Count how many distances are less than or equal to the radius
+    count = np.sum(distances <= radius)
+    
+    return count
+
 
 

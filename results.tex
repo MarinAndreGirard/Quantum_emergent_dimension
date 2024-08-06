@@ -1,0 +1,111 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+
+\usepackage{a4wide}
+\usepackage{braket}
+\usepackage{fancyhdr}
+\usepackage[bookmarks]{hyperref}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{amssymb, subfigure}
+\usepackage{amsbsy}
+\usepackage{comment}
+\usepackage{verbatim}
+\usepackage{mathrsfs}
+\usepackage{appendix}
+\usepackage{bm}
+\usepackage{bibentry}
+\usepackage[dvipsnames]{xcolor}
+
+\title{Mereology+}
+\author{}
+\date{June 2024}
+
+\begin{document}
+
+\maketitle
+
+\section{MDS with results from locality from chaos paper}
+
+We start from couplings from the PNAS paper "Unveiling Order from Chaos by approximate 2-localization of random matrices". These couplings are the $J^{\alpha\beta}_{ab}$ that contruct the 2-local Hamiltonian $H'$ with spectrum close to a Hamiltonian $H$ taken from the Gaussian orthogonal enssemble. 
+\begin{eqnarray}
+    H'=\sum_{ij,\alpha\beta}J^{\alpha\beta}_{ij}\sigma^{\alpha}_i\sigma^{\beta}_j
+\end{eqnarray}
+
+
+
+\subsection{MSD with couplings}
+To do multidimensional scaling using the couplings, we apply the recepei of the paper "Space from Hilbert Space: Recovering Geometry from Bulk Entanglement" skipping a few steps since we are not working with the entanglement structure.
+
+For a simulation the output is 5 tables of couplings $J_{xx}, J_{yy}, J_{zz}, J_{zx}, J_{xz}$, we define the table $J=J_{xx}^2 +J_{yy}^2+J_{zz}^2+J_{zx}^2+J_{xz}^2$ which tells use how strongly 2 qubits interact with each other.
+
+\begin{figure}
+    \includegraphics[options]{name}
+\end{figure}
+
+This can be seen as a weighted graph where the nodes are qubits and the edges are weighted by the interaction strenght between the qubits.
+
+\begin{figure}
+    \includegraphics[options]{name}
+\end{figure}
+
+Like in "Space from Hilbert Space" we re-scale the graph by mapping the weights $J_{ab}\rightarrow w_{ab}(J_{ab})=-log(J_{ab}/J_{max})$ with $J_{max}=max(J)$ and $w_{ab}=0$ if $a=b$.
+This does have the undesirable effect of making the 2 qubits with maximal interaction strength have distance 0. But the rest are fine.
+
+\begin{figure}
+    \includegraphics[options]{name}
+\end{figure}
+
+Following the recepei, we use the rescaled graph to calculate a distance graph by defining the distance between 2 qubits as, 
+\begin{eqnarray}
+    d(a,b)=min_P(\sum_{i} w(p_i,p_{i+1}))
+\end{eqnarray}
+where $P$ are possible paths between node $a$ and $b$.
+
+\begin{figure}
+    
+\end{figure}
+Note that qubits 1 and 2 are the same. this is because they have the highest interaction strength and their respective distance is artificially put to 0.
+
+From these distance between qubits we would like to use classical multidimensional scaling to find possible coordinates for our qubits in a euclidean manifold of dimension D. 
+But from our distance matrix, we get negative eigenvalues which means that the recepei for the coordinate matrix X used in the paper is not useful here.
+
+Using the MDS function from the sklearn package which is based on minimizing the stress when attempting to embed the data in a certain dimension. 
+
+The stress funciton used is ...
+
+We attempt to embedd the qubits into all dimensions from 1 to N and plot the resulting stress.
+\begin{figure}
+    
+\end{figure}
+Note we averaged the stress over 100 simulations
+
+SImilarly, for 100 simulations of the N=12 qubits system, we collect all qubits and for an embedding in 3D we plot 
+
+From the distance matrix, we get matrix B,
+$$B_{pq}=-\frac{1}{2}(d(p,q)^2-\frac{1}{N}\sum^{N}_{l=1}d(p,l)^2-\frac{1}{N}\sum^{N}_{l=1}d(l,q)^2+\frac{1}{N^2}\sum^N_{l,m=1}d(l,m)^2)$$
+
+From $B$ we contruct $X$ a matrix with columns corresponding to dimensions $x,y,z,...$ and rows the respective coordinate of a qubit in these dimensions.
+$$X=(\sqrt{\lambda_1}v_1,\sqrt{\lambda_2}v_2...)$$
+
+note that Classical MDS does not work if B has negative eigenvalues. Which is does.
+
+
+\subsection{MDS with mutual information}
+
+\subsection*{Other stuff}
+
+Add images
+Add what was before on the overleaf
+Add discussion points in my TODO.
+Make README ok.
+
+potential avenues of exploration. 
+Go to larger subsystem sizes. To computational expensive
+Define more complex cost functions.
+
+
+
+THe rescaling function might be biasing...
+
+\end{document}
