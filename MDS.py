@@ -1537,8 +1537,8 @@ def mapData(dab, plot=True):
     if plot:
         plt.scatter(x=X2[:, 0], y=X2[:, 1])
         plt.title('2D mapping')
-        for i in range(len(X2)):
-            plt.text(X2[i, 0], X2[i, 1], y[i], fontsize=12)
+#        for i in range(len(X2)):
+#            plt.text(X2[i, 0], X2[i, 1], y[i], fontsize=12)
         plt.xlim([-m1, m1])
         plt.ylim([-m1, m1])
         plt.show()
@@ -1559,21 +1559,21 @@ def mapData(dab, plot=True):
             aspectmode='cube'))
         
         # Add labels to the scatter plot
-        for i in range(len(X3)):
-            fig.add_trace(
-                go.Scatter3d(
-                    x=[X3[i, 0]],
-                    y=[X3[i, 1]],
-                    z=[X3[i, 2]],
-                    mode='text',
-                    text=y[i],
-                    textfont=dict(
-                        size=12,
-                        color='black'
-                    ),
-                    hoverinfo='none'
-                )
-            )
+#        for i in range(len(X3)):
+#            fig.add_trace(
+#                go.Scatter3d(
+#                    x=[X3[i, 0]],
+#                    y=[X3[i, 1]],
+#                    z=[X3[i, 2]],
+#                    mode='text',
+#                    text=y[i],
+#                    textfont=dict(
+#                        size=12,
+#                        color='black'
+#                    ),
+#                    hoverinfo='none'
+#                )
+#            )
         fig.show()
     else:
         return X2,X3,m1,m
